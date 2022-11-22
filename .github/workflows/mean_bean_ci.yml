@@ -73,7 +73,7 @@ jobs:
       - run: tar -czvf bore.tar.gz --directory=target/${{ matrix.target }}/release bore
       - uses: actions/upload-artifact@v1
         with:
-          name: bore-${{ matrix.platform }}
+          name: bore-${{ matrix.target }}.tar.gz
           path: bore.tar.gz
   
     strategy:
