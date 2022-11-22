@@ -68,18 +68,14 @@ jobs:
           path: /tmp/
       - run: chmod +x /tmp/cross
       - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - run: ci/build.bash /tmp/cross ${{ matrix.target }}
-        # These targets have issues with being tested so they are disabled
-        # by default. You can try disabling to see if they work for
-        # your project.
-      - run: ci/test.bash /tmp/cross ${{ matrix.target }}
-        if: |
-          !contains(matrix.target, 'android') &&
-          !contains(matrix.target, 'bsd') &&
-          !contains(matrix.target, 'solaris') &&
-          matrix.target != 'armv5te-unknown-linux-musleabi' &&
-          matrix.target != 'sparc64-unknown-linux-gnu'
-
+      
+      - run: ci/build.bash /tmp/cross ${{ matrix.target }} RELEASE
+      - run: tar -czvf bore.tar.gz --directory=target/${{ matrix.target }}/release bore
+      - uses: actions/upload-artifact@v1
+        with:
+          name: bore-${{ matrix.platform }}
+          path: bore.tar.gz
+  
     strategy:
       fail-fast: true
       matrix:
